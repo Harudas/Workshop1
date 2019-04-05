@@ -19,24 +19,31 @@ function loadBookData() {
     }
 }
 
-// create DropDownList from input HTML element
+// 換圖片
 $(document).ready(function () {
+
+    function onChange() {
+        kendo.ui.progress($("#grid"), true);
+        var baseUrl = 'image/';
+        $.getScript(baseUrl + this.value() + ".jpg", function () {
+        });
+    }
 
     $("#book_category").kendoDropDownList({
         dataTextField: "text",
         dataValueField: "value",
-        dataSource: bookCategoryList,
+        dataSource: [
+            { text: "資料庫" },
+            { text: "網際網路" },
+            { text: "應用系統整合" },
+            { text: "家庭保健" },
+            { text: "語言" }
+        ],
         index: 0,
         change: onChange
     });
 
-    function onChange() {
-        var value = $("#color").val();
-        $("#cap")
-            .toggleClass("black-cap", value == 1)
-            .toggleClass("orange-cap", value == 2)
-            .toggleClass("grey-cap", value == 3);
-    };
+    $("#book_category").data("kendoDropDownList").trigger("onChange");
 
 });
 
@@ -122,9 +129,11 @@ $('#add_book').click(function () {
 //日期判別
 $(document).ready(function () {
     $("#bought_datepicker").kendoDatePicker({
-        culture: ""
+        format: "yyyy-MM-dd"
     });
-    $("#delivered_datepicker").kendoDatePicker()
+    $("#delivered_datepicker").kendoDatePicker({
+        format: "yyyy-MM-dd"
+    })
 });
 
 
