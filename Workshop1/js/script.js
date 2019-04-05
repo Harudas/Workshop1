@@ -1,5 +1,7 @@
 
 var bookDataFromLocalStorage = [];
+kendo.culture("kendo.culture.zh-TW.min");
+
 
 //選擇種類
 var bookCategoryList = [
@@ -23,10 +25,13 @@ function loadBookData() {
 $(document).ready(function () {
 
     function onChange() {
-        kendo.ui.progress($("#grid"), true);
-        var baseUrl = 'image/';
-        $.getScript(baseUrl + this.value() + ".jpg", function () {
-        });
+        var value = $("#book_category").val;
+        $("#image")
+            .toggleClass("database", value == "database")
+            .toggleClass("internet", value == "internet")
+            .toggleClass("system", value == "system")
+            .toggleClass("home", value == "home")
+            .toggleClass("language", value == "language");
     }
 
     $("#book_category").kendoDropDownList({
@@ -42,9 +47,6 @@ $(document).ready(function () {
         index: 0,
         change: onChange
     });
-
-    $("#book_category").data("kendoDropDownList").trigger("onChange");
-
 });
 
 
@@ -92,7 +94,9 @@ $("#book_grid").kendoGrid({
             field: "BookTotal",
             title: "總計"
         }]
-});
+})
+
+
 
 
 //刪除FUNCTION
@@ -128,12 +132,32 @@ $('#add_book').click(function () {
 
 //日期判別
 $(document).ready(function () {
+
     $("#bought_datepicker").kendoDatePicker({
         format: "yyyy-MM-dd"
     });
     $("#delivered_datepicker").kendoDatePicker({
         format: "yyyy-MM-dd"
     })
+
+
+    //提醒
+    var notification = $("#notification").kendoNotification({
+        width: "12em",
+        templates: [{
+            type: "time",
+            template: "<div style='padding: .6em 1em'>Time is: <span class='timeWrap'>#: time #</span></div>"
+        }]
+    }).data("kendoNotification");
+
+  
+        //notification.show("送達日期不可早於購買日期");
+
+
+    $("#hideAllNotifications").click(function () {
+        notification.hide();
+    });
+
 });
 
 
