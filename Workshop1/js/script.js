@@ -90,6 +90,7 @@ columns: [{
 });
 
 
+
 //刪除FUNCTION
 function delet(e) {
     e.preventDefault();
@@ -119,13 +120,19 @@ function delet(e) {
 $("#book_price").kendoNumericTextBox(
     {
         format: "n0",
-        min: 0
+        min: 0,
+        spin:onspin
 });
 $("#book_amount").kendoNumericTextBox(
     {
         format: "n0",
-        min: 0
+        min: 0,
+        spin:onspin
+
     });
+    function onspin(){
+        document.getElementById("book_total").innerHTML = $("#book_price").val() * $("#book_amount").val();
+    }
 
 // 換圖片
     function onChange() {
@@ -141,25 +148,26 @@ $("#book_amount").kendoNumericTextBox(
     $("#book_category").kendoDropDownList({
         dataTextField: "text",
         dataValueField: "value",
-        dataSource: [
-            { text: "資料庫" },
-            { text: "網際網路" },
-            { text: "應用系統整合" },
-            { text: "家庭保健" },
-            { text: "語言" }
-        ],
+        dataSource: bookCategoryList,
         index: 0,
         change: onChange
     });
 
 //日期判別
 $("#bought_datepicker").kendoDatePicker({
-    format: "yyyy-MM-dd"
+    format: "yyyy-MM-dd",
+    min: new Date(),
+    value: new Date()
 });
 $("#delivered_datepicker").kendoDatePicker({
-    format: "yyyy-MM-dd"
+    format: "yyyy-MM-dd",
+    min: new Date($("#bought_datepicker").val()),
 })
 
+    //notification.show("送達日期不可早於購買日期");
+    $("#hideAllNotifications").click(function () {
+        notification.hide();
+    });
 
 //提醒
 var notification = $("#notification").kendoNotification({
@@ -171,12 +179,7 @@ var notification = $("#notification").kendoNotification({
 }).data("kendoNotification");
 
 
-    //notification.show("送達日期不可早於購買日期");
 
-
-$("#hideAllNotifications").click(function () {
-    notification.hide();
-});
 
 
 });
