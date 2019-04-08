@@ -143,6 +143,7 @@ $("#book_amount").kendoNumericTextBox(
             .toggleClass("system", value == "system")
             .toggleClass("home", value == "home")
             .toggleClass("language", value == "language");
+
     }
 //下拉
     $("#book_category").kendoDropDownList({
