@@ -36,12 +36,12 @@
                         <li>
                             <label class="required">書名</label>
                             <div style="display:none" class="fa-align-left">waring</div>
-                            <input id="book_name" type="text" style="width: 100%;" />
+                            <input id="book_name" type="text" style="width: 100%;" required/>
                         </li>
                         <li>
                             <label class="required">作者</label>
                             <div style="display:none" class="fa-align-left">waring</div>
-                            <input id="book_author" type="text" style="width: 100%;" />
+                            <input id="book_author" type="text" style="width: 100%;" required/>
                         </li>
                         <li>
                             <label class="required">購買日期</label>
@@ -49,28 +49,34 @@
                         </li>
                         <li>
                             <label>送達日期</label>
-                            <input id="delivered_datepicker" style="width: 100%;" />
+                            <input id="delivered_datepicker" style="width: 100%;" required/>
                         </li>
                         <span id="notification" style="display:none;"></span>
                         <li>
                             <label class="required">金額</label>
-                            <input id="book_price" type="text" style="width: 100%;text-align:right;" />
+                            <input id="book_price" type="text" style="width: 100%;text-align:right;" required/>
                         </li>
                         <li>
                             <label class="required">數量</label>
-                            <input id="book_amount" type="text" style="width: 100%;text-align:right;" />
+                            <input id="book_amount" type="text" style="width: 100%;text-align:right;" required/>
                         </li>
-                        <li>
+
+                        <li class="uk-text-right">
                             <span style="float:right;">
                                 總計&nbsp;<span id="book_total">0</span> 元
                             </span>
                         </li>
+
+
                         <li class="uk-text-right">
                             <button type="button" class="k-button k-primary btn-add-book" id="save_book">新增</button>
                         </li>
+
                     </ul>
                 </form>
             </div>
+
+
             <button type="button" id="add_book" class="k-button k-primary btn-add-book">新增書籍</button>
 
             <div id="book_grid"></div>
@@ -119,7 +125,7 @@
         }
 
         .system {
-            background-image: url(image/system.jpg
+            background-image: url(image/system.jpg)
         }
 
         .home {

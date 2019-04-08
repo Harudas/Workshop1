@@ -1,7 +1,5 @@
 
 var bookDataFromLocalStorage = [];
-kendo.culture("kendo.culture.zh-TW.min");
-
 
 //選擇種類
 var bookCategoryList = [
@@ -19,11 +17,117 @@ function loadBookData() {
         bookDataFromLocalStorage = bookData;
         localStorage.setItem('bookData', JSON.stringify(bookDataFromLocalStorage));
     }
-}
+};
+
+
+// 起始化做在同一個地方
+$(document).ready(function () {
+    // 載入書籍資料
+    loadBookData();
+    // 中文
+    kendo.culture("zh-TW");
+    // 新增視窗
+    $('#add_book').click(function () {
+        var myWindow = $("#book_form");
+    
+        myWindow.kendoWindow({
+            width: "600px",
+            title: "新增書籍",
+            visible: false,
+            actions: [
+                "Pin",
+                "Minimize",
+                "Maximize",
+                "Close"
+            ],
+        }).data("kendoWindow").center().open();
+    });
+
+    //gird本體
+$("#book_grid").kendoGrid({
+    dataSource: {
+        data: bookData,
+        pageSize: 20,
+    },
+    height: 550,
+
+    pageable: {
+        refresh: true,
+        pageSizes: true,
+        buttonCount: 5
+    },
+columns: [{
+    command: { text: "刪除", click: delet },
+        title: " ", width: "180px"
+    },{
+        field: "BookId",
+        title: "書籍編號"
+    }, {
+        field: "BookName",
+        title: "書籍名稱"
+    }, {
+        field: "BookCategory",
+        title: "書籍種類"
+    }, {
+        field: "BookAuthor",
+        title: "作者"
+    }, {
+        field: "BookBoughtDate",
+        title: "購買日期"
+    }, {
+        field: "BookPublisher",
+        title: "送達狀態"
+    }, {
+        field: "BookPrice",
+        title: "金額"
+    }, {
+        field: "BookAmount",
+        title: "數量"
+    }, {
+        field: "BookTotal",
+        title: "總計"
+    }]
+});
+
+
+//刪除FUNCTION
+function delet(e) {
+    e.preventDefault();
+    var tr = $(e.target).closest("tr");
+    var data = this.dataItem(tr);
+    kendo.confirm("確定刪除「" + data.BookName + "」嗎?").then(function () {
+        bookDataFromLocalStorage = JSON.parse(localStorage.getItem('bookData'));
+        n=0;
+        for (var i = 0, max = bookDataFromLocalStorage.length; i < max; i++) {
+            if (bookDataFromLocalStorage[i].BookId==data.BookId) {
+                break;
+            } else {
+                n++
+            }
+        }
+        bookDataFromLocalStorage.splice(n,1);
+        localStorage.setItem('bookData', JSON.stringify(bookDataFromLocalStorage));
+        //上面方法直接刪除loadBookData資料
+        grid.dataSource.remove(data);//直接刪除grid的列
+    }, function () {
+    });
+};
+
+
+
+//金額數量判別
+$("#book_price").kendoNumericTextBox(
+    {
+        format: "n0",
+        min: 0
+});
+$("#book_amount").kendoNumericTextBox(
+    {
+        format: "n0",
+        min: 0
+    });
 
 // 換圖片
-$(document).ready(function () {
-
     function onChange() {
         var value = $("#book_category").val;
         $("#image")
@@ -33,7 +137,7 @@ $(document).ready(function () {
             .toggleClass("home", value == "home")
             .toggleClass("language", value == "language");
     }
-
+//下拉
     $("#book_category").kendoDropDownList({
         dataTextField: "text",
         dataValueField: "value",
@@ -47,132 +151,32 @@ $(document).ready(function () {
         index: 0,
         change: onChange
     });
+
+//日期判別
+$("#bought_datepicker").kendoDatePicker({
+    format: "yyyy-MM-dd"
 });
-
-
-//gird本體
-$("#book_grid").kendoGrid({
-        dataSource: {
-            data: bookData,
-            pageSize: 20,
-        },
-        height: 550,
-
-        pageable: {
-            refresh: true,
-            pageSizes: true,
-            buttonCount: 5
-        },
-    columns: [{
-        command: { text: "刪除", click: delet },
-            title: " ", width: "180px"
-        },{
-            field: "BookId",
-            title: "書籍編號"
-        }, {
-            field: "BookName",
-            title: "書籍名稱"
-        }, {
-            field: "BookCategory",
-            title: "書籍種類"
-        }, {
-            field: "BookAuthor",
-            title: "作者"
-        }, {
-            field: "BookBoughtDate",
-            title: "購買日期"
-        }, {
-            field: "BookPublisher",
-            title: "送達狀態"
-        }, {
-            field: "BookPrice",
-            title: "金額"
-        }, {
-            field: "BookAmount",
-            title: "數量"
-        }, {
-            field: "BookTotal",
-            title: "總計"
-        }]
+$("#delivered_datepicker").kendoDatePicker({
+    format: "yyyy-MM-dd"
 })
 
 
+//提醒
+var notification = $("#notification").kendoNotification({
+    width: "12em",
+    templates: [{
+        type: "time",
+        template: "<div style='padding: .6em 1em'>Time is: <span class='timeWrap'>#: time #</span></div>"
+    }]
+}).data("kendoNotification");
 
 
-//刪除FUNCTION
-
-function delet(e) {
-    e.preventDefault();
-
-    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-    wnd.content(detailsTemplate(dataItem));
-    wnd.center().open();
-}
+    //notification.show("送達日期不可早於購買日期");
 
 
-//新增視窗
-
-$('#add_book').click(function () {
-    var myWindow = $("#book_form");
-
-    myWindow.kendoWindow({
-        width: "600px",
-        title: "新增書籍",
-        visible: false,
-        actions: [
-            "Pin",
-            "Minimize",
-            "Maximize",
-            "Close"
-        ],
-    }).data("kendoWindow").center().open();
-
-
-});
-
-//日期判別
-$(document).ready(function () {
-
-    $("#bought_datepicker").kendoDatePicker({
-        format: "yyyy-MM-dd"
-    });
-    $("#delivered_datepicker").kendoDatePicker({
-        format: "yyyy-MM-dd"
-    })
-
-
-    //提醒
-    var notification = $("#notification").kendoNotification({
-        width: "12em",
-        templates: [{
-            type: "time",
-            template: "<div style='padding: .6em 1em'>Time is: <span class='timeWrap'>#: time #</span></div>"
-        }]
-    }).data("kendoNotification");
-
-  
-        //notification.show("送達日期不可早於購買日期");
-
-
-    $("#hideAllNotifications").click(function () {
-        notification.hide();
-    });
-
+$("#hideAllNotifications").click(function () {
+    notification.hide();
 });
 
 
-//金額數量判別
-$(document).ready(function () {
-    $("#book_price").kendoNumericTextBox(
-        {
-            format: "n0",
-            min: 0
-    });
-    $("#book_amount").kendoNumericTextBox(
-        {
-            format: "n0",
-            min: 0
-        });
 });
-var price = $("#book_price").value;
-var amount = $("#book_amount").value;
